@@ -1,0 +1,60 @@
+name: Release and publish to GitHub Packages
+
+# При изменении src/*: patch-версия → npm publish → коммит package.json с [skip ci] (без повторного запуска).
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "src/**"
+
+permissions:
+  contents: write
+  packages: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Skip automated release commits
+        env:
+          MSG: ${{ github.event.head_commit.message }}
+        run: |
+          if [ -n "${MSG:-}" ] && echo "${MSG}" | grep -qF '[skip ci]'; then
+            echo "Commit is an automated bump — skipping."
+            exit 0
+          fi
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Git identity
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Patch version, publish, push bump commit
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          npm version patch --no-git-tag-version
+          NEW_VER="$(node -p "require('./package.json').version")"
+          echo "Publishing @merfy-dropshipping-platform/design-systems-theme@${NEW_VER}"
+          npm publish
+          git add package.json
+          git commit -m "chore(release): ${NEW_VER} [skip ci]"
+          git push origin "HEAD:${GITHUB_REF_NAME}"

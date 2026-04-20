@@ -1,9 +1,21 @@
 {
-  "name": "@merfy/design-systems-theme",
-  "version": "0.0.1",
-  "private": true,
+  "name": "@merfy-dropshipping-platform/design-systems-theme",
+  "version": "0.1.0",
   "type": "module",
-  "description": "Дизайн-система тем — компоненты и токены Figma New-Themes для конструктора",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Merfy-Dropshipping-Platform/DesignSystemsTheme.git"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "files": [
+    "src"
+  ],
+  "exports": {
+    "./package.json": "./package.json",
+    "./*": "./src/*"
+  },
   "peerDependencies": {
     "react": ">=18"
   },
