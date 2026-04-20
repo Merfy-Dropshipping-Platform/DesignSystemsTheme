@@ -104,15 +104,13 @@ const evToggle = `${eventPrefix}:toggle`;
 	</aside>
 </div>
 
-<script define:vars={{ rootId, evOpen, evClose, evToggle }}>
-	type CartState = "open" | "closed";
-
-	const setState = (state: CartState) => {
+<script is:inline define:vars={{ rootId, evOpen, evClose, evToggle }}>
+	const setState = (state) => {
 		const root = document.getElementById(rootId);
 		if (!root) return;
 		root.dataset.state = state;
 		root.setAttribute("aria-hidden", state === "open" ? "false" : "true");
-		root.querySelectorAll<HTMLElement>("[data-state]").forEach((el) => {
+		root.querySelectorAll("[data-state]").forEach((el) => {
 			el.dataset.state = state;
 		});
 		document.body.style.overflow = state === "open" ? "hidden" : "";
@@ -122,7 +120,8 @@ const evToggle = `${eventPrefix}:toggle`;
 	const close = () => setState("closed");
 
 	document.addEventListener("click", (event) => {
-		const target = event.target as HTMLElement;
+		const target = event.target;
+		if (!(target instanceof HTMLElement)) return;
 		if (target.closest("[data-cart-close]")) {
 			event.preventDefault();
 			close();
@@ -142,7 +141,7 @@ const evToggle = `${eventPrefix}:toggle`;
 	window.addEventListener(evClose, close);
 	window.addEventListener(evToggle, () => {
 		const root = document.getElementById(rootId);
-		if (root?.dataset.state === "open") close();
+		if (root && root.dataset.state === "open") close();
 		else open();
 	});
 </script>
