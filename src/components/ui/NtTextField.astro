@@ -1,0 +1,75 @@
+---
+/**
+ * Поле ввода — формы 494:10961 (h 56px, radius 4px, Manrope 16px).
+ */
+interface Props {
+  label: string;
+  name: string;
+  id?: string;
+  type?: string;
+  placeholder?: string;
+  value?: string;
+  autocomplete?: string;
+  /** strong — чёрная обводка (активное); muted — #999999; error — красная обводка (валидация) */
+  border?: "strong" | "muted" | "error";
+  class?: string;
+  inputClass?: string;
+}
+
+const {
+  label,
+  name,
+  id: idProp,
+  type = "text",
+  placeholder,
+  value,
+  autocomplete,
+  border = "strong",
+  class: className = "",
+  inputClass = "",
+} = Astro.props;
+
+const id = idProp ?? `nt-field-${name}`.replace(/[\[\]]/g, "");
+const borderCls =
+  border === "muted"
+    ? "border-[#999999]"
+    : border === "error"
+      ? "border-[#FF9494]"
+      : "border-[#000000]";
+const focusBorder =
+  border === "error" ? "focus-visible:border-[#FF9494]" : "focus-visible:border-[#000000]";
+const hasTrailing = Astro.slots.has("trailing");
+---
+
+<div
+  class:list={["flex w-full max-w-[430px] flex-col gap-2", className]}
+  data-nt="text-field"
+>
+  <label for={id} class="font-manrope text-[16px] font-normal leading-normal text-[#000000]">
+    {label}
+  </label>
+  <div class="relative w-full">
+    <input
+      id={id}
+      name={name}
+      type={type}
+      placeholder={placeholder}
+      value={value}
+      autocomplete={autocomplete}
+      class:list={[
+        "box-border h-14 w-full min-h-[56px] rounded-[4px] border border-solid bg-[#FFFFFF] px-4 font-manrope text-[16px] font-normal leading-normal text-[#000000] outline-none placeholder:text-[#999999]",
+        focusBorder,
+        borderCls,
+        hasTrailing ? "pr-12" : "",
+        inputClass,
+      ]}
+    />
+    {
+      hasTrailing && (
+        <div class="absolute right-4 top-1/2 flex -translate-y-1/2 items-center [&_button]:pointer-events-auto">
+          <slot name="trailing" />
+        </div>
+      )
+    }
+  </div>
+</div>

@@ -1,0 +1,19 @@
+---
+/**
+ * Полоса скролла — Figma `286:3589` (4×168px, radius 3px, fill #F5F5F5).
+ */
+import { getNtIconUrl } from "../../lib/icon-paths";
+
+interface Props {
+  /** База пути к `/new-themes/icons/` в приложении */
+  iconBasePath?: string;
+  class?: string;
+}
+
+const { iconBasePath = "/new-themes/icons", class: className = "" } = Astro.props;
+const src = getNtIconUrl("scroll-track-vertical", iconBasePath);
+---
+
+<div class:list={["inline-flex flex-col items-center", className]} data-nt="scroll-indicator" aria-hidden="true">
+  <img src={src} alt="" class="pointer-events-none h-[168px] w-1 shrink-0 object-contain" width="4" height="168" />
+</div>

@@ -1,0 +1,14 @@
+{
+  "name": "@merfy/design-systems-theme",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "description": "Дизайн-система тем — компоненты и токены Figma New-Themes для конструктора",
+  "peerDependencies": {
+    "react": ">=18"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.0",
+    "react": "^19.2.4"
+  }
+}

@@ -1,0 +1,53 @@
+---
+/**
+ * Кнопки Fill/Outline — UNIVERSAL PICTURES PRESENT: lg 50:2867, md 40:18, sm 42:4249, xs 449:8222.
+ */
+interface Props {
+  href?: string;
+  type?: "button" | "submit" | "reset";
+  /** fill — белая заливка; outline; solid — чёрная заливка, белый текст (попапы, CTA) */
+  variant?: "fill" | "outline" | "solid";
+  size?: "xs" | "sm" | "md" | "lg";
+  disabled?: boolean;
+  class?: string;
+}
+
+const {
+  href,
+  type = "button",
+  variant = "fill",
+  size = "lg",
+  disabled = false,
+  class: className = "",
+} = Astro.props;
+
+const base =
+  "inline-flex items-center justify-center font-manrope font-normal leading-normal transition-opacity border border-[#000000] disabled:cursor-not-allowed disabled:opacity-40";
+
+const sizes: Record<NonNullable<Props["size"]>, string> = {
+  xs: "min-h-8 px-2 text-[12px] rounded-[4px]",
+  sm: "min-h-10 px-3 py-2.5 text-[14px] rounded-[4px]",
+  md: "min-h-12 px-4 py-2.5 text-[16px] rounded-[6px]",
+  lg: "min-h-14 px-5 text-[16px] rounded-[8px]",
+};
+
+const variants: Record<NonNullable<Props["variant"]>, string> = {
+  fill: "bg-[#FFFFFF] text-[#000000] hover:opacity-95",
+  outline: "bg-transparent text-[#000000] hover:opacity-95",
+  solid: "bg-[#000000] text-[#FFFFFF] border-[#000000] hover:opacity-95",
+};
+
+const cls = `${base} ${sizes[size]} ${variants[variant]} ${className}`;
+---
+
+{
+  href && !disabled ? (
+    <a href={href} class={cls} data-nt="button" data-nt-size={size} data-nt-variant={variant}>
+      <slot />
+    </a>
+  ) : (
+    <button type={type} class={cls} disabled={disabled} data-nt="button" data-nt-size={size} data-nt-variant={variant}>
+      <slot />
+    </button>
+  )
+}

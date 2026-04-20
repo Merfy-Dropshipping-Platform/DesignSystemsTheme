@@ -1,0 +1,96 @@
+---
+/**
+ * Попап — 494:10771 (1920, 614px), 494:10839 (768, 432px), 494:10849 (375, 343px).
+ */
+interface Props {
+  title: string;
+  subtitle?: string;
+  dismissLabel?: string;
+  /** Размер кадра из макета */
+  layout?: "1920" | "768" | "375";
+  class?: string;
+}
+
+const {
+  title,
+  subtitle,
+  dismissLabel = "Скрыть",
+  layout = "1920",
+  class: className = "",
+} = Astro.props;
+
+const maxW =
+  layout === "1920" ? "max-w-[614px]" : layout === "768" ? "max-w-[432px]" : "max-w-[343px]";
+const maxH =
+  layout === "1920"
+    ? "max-h-[min(952px,90vh)]"
+    : layout === "768"
+      ? "max-h-[min(924px,90vh)]"
+      : "max-h-[min(694px,90vh)]";
+const titleCls =
+  layout === "1920"
+    ? "text-[20px]"
+    : layout === "768"
+      ? "text-[16px]"
+      : "text-[16px]";
+const subCls =
+  layout === "1920"
+    ? "text-[16px]"
+    : layout === "768"
+      ? "text-[14px]"
+      : "text-[14px]";
+const padX = layout === "1920" ? "px-6" : "px-5";
+const ptTop = layout === "1920" ? "pt-8" : "pt-7";
+const bodyPt = layout === "1920" ? "pt-10" : "pt-8";
+const dismissCls =
+  layout === "1920" ? "text-[16px]" : "text-[14px]";
+---
+
+<div
+  class:list={[
+    "relative w-full bg-[#FFFFFF] font-manrope",
+    maxW,
+    maxH,
+    "overflow-y-auto shadow-[0_4px_24px_rgba(0,0,0,0.08)]",
+    className,
+  ]}
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="nt-modal-title"
+  data-nt="modal-popup"
+  data-nt-layout={layout}
+>
+  <div class:list={["flex items-start justify-between gap-4", padX, ptTop]}>
+    <div class="flex min-w-0 flex-col gap-2 pr-4">
+      <h2
+        id="nt-modal-title"
+        class:list={[
+          "font-comfortaa font-normal uppercase leading-normal text-[#000000]",
+          titleCls,
+        ]}
+      >
+        {title}
+      </h2>
+      {
+        subtitle && (
+          <p class:list={["font-normal leading-normal text-[#999999]", subCls]}>
+            {subtitle}
+          </p>
+        )
+      }
+    </div>
+    <button
+      type="button"
+      class:list={[
+        "shrink-0 font-normal leading-normal text-[#999999] transition-opacity hover:opacity-80",
+        dismissCls,
+      ]}
+      aria-label={dismissLabel}
+    >
+      {dismissLabel}
+    </button>
+  </div>
+  <div class:list={[padX, "pb-8", bodyPt]}>
+    <slot />
+  </div>
+</div>

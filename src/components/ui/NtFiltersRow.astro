@@ -1,0 +1,30 @@
+---
+/**
+ * Горизонтальный ряд карточек фильтров — Figma 493:5448 (gap 12px).
+ */
+import NtFilterPanel from "./NtFilterPanel.astro";
+
+type NtFilterPanelKind = "stock" | "price" | "color" | "sort";
+
+interface Props {
+  /** По умолчанию все четыре панели как в макете */
+  panels?: NtFilterPanelKind[];
+  /** 493:5448 — 1920; 493:5443 — 1280 */
+  density?: "1920" | "1280";
+  class?: string;
+}
+
+const {
+  panels = ["stock", "price", "color", "sort"],
+  density = "1920",
+  class: className = "",
+} = Astro.props;
+---
+
+<div
+  class:list={["flex flex-wrap items-start gap-3", className]}
+  data-nt="filters-row"
+  data-nt-density={density}
+>
+  {panels.map((p) => <NtFilterPanel panel={p} density={density} />)}
+</div>

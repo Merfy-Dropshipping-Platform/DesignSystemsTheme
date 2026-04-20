@@ -1,0 +1,264 @@
+---
+import NtIcon from "./NtIcon.astro";
+
+export interface NtNavLink {
+  label: string;
+  href: string;
+  submenu?: { label: string; href: string }[];
+}
+
+interface Props {
+  siteTitle: string;
+  logoUrl?: string | null;
+  nav: NtNavLink[];
+  currentPath: string;
+  iconBasePath?: string;
+  showSearch?: boolean;
+  showCart?: boolean;
+  showProfile?: boolean;
+  /** Первый пункт с дропдауном и подчёркиванием (как в макете) */
+  firstItemDropdown?: boolean;
+}
+
+const {
+  siteTitle,
+  logoUrl,
+  nav,
+  currentPath,
+  iconBasePath,
+  showSearch = true,
+  showCart = true,
+  showProfile = true,
+  firstItemDropdown = true,
+} = Astro.props;
+
+const isActive = (href: string) =>
+  currentPath === href || (href === "/" && currentPath === "/");
+---
+
+<header
+  class="bg-white w-full border-b border-[#F5F5F5] shadow-sm"
+  data-nt="header-stacked"
+>
+  <!-- Mobile: 375 — 64px -->
+  <div class="relative z-[210] flex h-16 items-center justify-between bg-white px-4 md:hidden">
+    <button
+      type="button"
+      id="mobile-menu-button"
+      class="flex size-10 items-center justify-center transition-opacity hover:opacity-70"
+      aria-label="Меню"
+      aria-expanded="false"
+      aria-controls="mobile-menu"
+    >
+      <span id="mobile-menu-burger" class="contents"
+        ><NtIcon name="menu-burger" iconBasePath={iconBasePath} sizeClass="size-6" /></span
+      >
+      <span id="mobile-menu-close" class="hidden"
+        ><NtIcon name="menu-close" iconBasePath={iconBasePath} sizeClass="size-6" /></span
+      >
+    </button>
+    <div class="flex min-w-0 flex-1 justify-center">
+      <a
+        href="/"
+        class="font-comfortaa text-[20px] font-normal uppercase text-[#000000] truncate hover:opacity-80"
+      >
+        {
+          logoUrl ? (
+            <img src={logoUrl} alt={siteTitle} class="max-h-8 w-auto object-contain" />
+          ) : (
+            siteTitle
+          )
+        }
+      </a>
+    </div>
+    <div class="flex items-center gap-4">
+      {
+        showSearch && (
+          <a href="#" class="flex size-6 items-center justify-center" aria-label="Поиск">
+            <NtIcon name="search-sm" iconBasePath={iconBasePath} sizeClass="size-6" />
+          </a>
+        )
+      }
+      {
+        showCart && (
+          <a href="#" class="flex size-6 items-center justify-center rounded-[6px]" aria-label="Корзина">
+            <NtIcon name="cart-sm" iconBasePath={iconBasePath} sizeClass="size-4" />
+          </a>
+        )
+      }
+      {
+        showProfile && (
+          <a href="#" class="flex size-6 items-center justify-center rounded-[6px]" aria-label="Аккаунт">
+            <NtIcon name="user-sm" iconBasePath={iconBasePath} sizeClass="size-4" />
+          </a>
+        )
+      }
+    </div>
+  </div>
+
+  <!-- Desktop: Header; 1920; Сверху слева — node 17:1593 -->
+  <div class="hidden md:flex flex-col gap-5 px-4 lg:px-20 2xl:px-[300px] py-6 max-w-[1920px] mx-auto w-full">
+    <div class="flex w-full items-center justify-between">
+      <a href="/" class="shrink-0 font-comfortaa text-2xl lg:text-[32px] font-normal uppercase text-[#000000] hover:opacity-90 leading-none">
+        {
+          logoUrl ? (
+            <img src={logoUrl} alt={siteTitle} class="max-h-10 w-auto object-contain" />
+          ) : (
+            siteTitle
+          )
+        }
+      </a>
+      <div class="flex items-center gap-5">
+        {
+          showSearch && (
+            <a
+              href="#"
+              class="flex size-10 items-center justify-center overflow-hidden"
+              aria-label="Поиск"
+            >
+              <NtIcon name="search-lg" iconBasePath={iconBasePath} sizeClass="size-10" />
+            </a>
+          )
+        }
+        {
+          showCart && (
+            <a
+              href="#"
+              class="flex size-10 items-center justify-center overflow-hidden rounded-[10px] p-0.5"
+              aria-label="Корзина"
+            >
+              <NtIcon name="cart" iconBasePath={iconBasePath} sizeClass="size-6" />
+            </a>
+          )
+        }
+        {
+          showProfile && (
+            <a
+              href="#"
+              class="flex size-10 items-center justify-center overflow-hidden rounded-[10px] px-1 py-0.5"
+              aria-label="Аккаунт"
+            >
+              <NtIcon name="user" iconBasePath={iconBasePath} sizeClass="h-6 w-[19px]" />
+            </a>
+          )
+        }
+      </div>
+    </div>
+
+    <nav class="relative flex flex-wrap items-center gap-10" aria-label="Основное меню">
+      {
+        nav.map((link, i) => {
+          const active = isActive(link.href);
+          const isFirst = i === 0;
+          return (
+            <div class="relative flex items-center gap-1">
+              {isFirst && active && (
+                <span class="pointer-events-none absolute left-0 top-[35px] h-px w-[95px] overflow-hidden">
+                  <img
+                    src={iconBasePath ? `${iconBasePath.replace(/\/$/, "")}/nav-underline.svg` : "/new-themes/icons/nav-underline.svg"}
+                    alt=""
+                    class="h-px w-[95px] max-w-none"
+                    width="95"
+                    height="1"
+                  />
+                </span>
+              )}
+              <a
+                href={link.href}
+                class:list={[
+                  "font-manrope text-[16px] lg:text-[20px] font-normal leading-normal text-[#000000] hover:opacity-80",
+                  active && "relative",
+                ]}
+              >
+                {link.label}
+              </a>
+              {firstItemDropdown && isFirst && (
+                <span class="inline-flex size-6 items-center justify-center" aria-hidden="true">
+                  <NtIcon name="dropdown-chevron" iconBasePath={iconBasePath} sizeClass="size-6" />
+                </span>
+              )}
+            </div>
+          );
+        })
+      }
+    </nav>
+  </div>
+
+  <!-- Мобильное полноэкранное меню -->
+  <div
+    id="mobile-menu"
+    class="fixed inset-0 z-[200] hidden flex-col bg-white pt-20 px-4 pb-8 overflow-y-auto md:hidden"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Меню сайта"
+  >
+    <div class="flex justify-end mb-6">
+      <button
+        type="button"
+        class="mobile-menu-dismiss text-[#000000] font-manrope text-base underline"
+      >
+        Закрыть
+      </button>
+    </div>
+    <nav class="flex flex-col gap-6" aria-label="Мобильная навигация">
+      {
+        nav.map((link) => (
+          <>
+            <a
+              href={link.href}
+              class="font-manrope text-[20px] font-normal text-[#000000] py-2 border-b border-[#F5F5F5]"
+            >
+              {link.label}
+            </a>
+            {link.submenu && link.submenu.length > 0 && (
+              <ul class="ml-2 flex flex-col gap-2 pb-2">
+                {link.submenu.map((s) => (
+                  <li>
+                    <a href={s.href} class="font-manrope text-[16px] text-[#606060]">
+                      {s.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </>
+        ))
+      }
+    </nav>
+  </div>
+</header>
+
+<script is:inline>
+  (() => {
+    const btn = document.getElementById("mobile-menu-button");
+    const panel = document.getElementById("mobile-menu");
+    const burger = document.getElementById("mobile-menu-burger");
+    const closeIc = document.getElementById("mobile-menu-close");
+    if (!btn || !panel) return;
+    const setOpen = (open) => {
+      if (open) {
+        panel.classList.remove("hidden");
+        panel.classList.add("flex");
+      } else {
+        panel.classList.add("hidden");
+        panel.classList.remove("flex");
+      }
+      btn.setAttribute("aria-expanded", String(open));
+      if (burger && closeIc) {
+        burger.classList.toggle("hidden", open);
+        closeIc.classList.toggle("hidden", !open);
+      }
+      document.body.classList.toggle("overflow-hidden", open);
+    };
+    btn.addEventListener("click", () => {
+      const open = panel.classList.contains("hidden");
+      setOpen(open);
+    });
+    panel.querySelectorAll("a").forEach((a) => {
+      a.addEventListener("click", () => setOpen(false));
+    });
+    document.querySelectorAll(".mobile-menu-dismiss").forEach((el) => {
+      el.addEventListener("click", () => setOpen(false));
+    });
+  })();
+</script>

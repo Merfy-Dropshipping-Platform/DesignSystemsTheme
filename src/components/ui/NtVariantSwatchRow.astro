@@ -1,0 +1,81 @@
+---
+/**
+ * Ряд кнопок-образцов цвета — Figma 494:10711 (круг), 494:10723 (квадрат, radius 2px, 24×24).
+ */
+export interface NtVariantSwatchItem {
+  id: string;
+  /** CSS color из каталога */
+  color: string;
+  disabled?: boolean;
+  /** Нет в наличии: белый/светлый + перечёркивание */
+  unavailable?: boolean;
+}
+
+interface Props {
+  namePrefix: string;
+  selectedLabel: string;
+  /** Круг или квадрат со скруглением 2px */
+  shape: "circle" | "square";
+  items: NtVariantSwatchItem[];
+  /** Имя группы радио для доступности */
+  groupName?: string;
+  selectedId?: string;
+  class?: string;
+}
+
+const {
+  namePrefix,
+  selectedLabel,
+  shape,
+  items,
+  groupName = "nt-variant-color",
+  selectedId,
+  class: className = "",
+} = Astro.props;
+
+const rounded = shape === "circle" ? "rounded-full" : "rounded-[2px]";
+---
+
+<div class:list={["flex flex-col gap-3 font-manrope", className]} data-nt="variant-swatch-row" data-nt-shape={shape}>
+  <div class="flex flex-wrap items-center gap-1 text-[16px] font-normal leading-normal text-[#000000]">
+    <span>{namePrefix}</span>
+    <span>{selectedLabel}</span>
+  </div>
+  <div class="flex flex-wrap gap-2" role="radiogroup" aria-label={namePrefix}>
+    {
+      items.map((item) => {
+        const isSel = selectedId === item.id;
+        return (
+          <button
+            type="button"
+            disabled={item.disabled}
+            class:list={[
+              "relative flex size-6 shrink-0 items-center justify-center p-0 outline-none transition-opacity focus-visible:ring-2 focus-visible:ring-[#000000] focus-visible:ring-offset-2",
+              item.disabled ? "cursor-not-allowed opacity-50" : "cursor-pointer hover:opacity-90",
+              isSel ? "ring-2 ring-[#000000] ring-offset-1" : "ring-0",
+            ]}
+            role="radio"
+            aria-checked={isSel}
+            aria-label={item.id}
+            data-id={item.id}
+          >
+            {item.unavailable ? (
+              <span class:list={["relative block size-6 overflow-hidden border border-solid border-[#F5F5F5] bg-[#FFFFFF]", rounded]}>
+                <span
+                  class="absolute left-1/2 top-1/2 z-[1] block h-px w-[130%] -translate-x-1/2 -translate-y-1/2 rotate-45 bg-[#999999]"
+                  aria-hidden="true"
+                />
+              </span>
+            ) : (
+              <span
+                class:list={["block size-6", rounded]}
+                style={{ backgroundColor: item.color }}
+                aria-hidden="true"
+              />
+            )}
+          </button>
+        );
+      })
+    }
+  </div>
+</div>

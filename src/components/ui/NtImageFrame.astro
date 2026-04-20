@@ -1,0 +1,47 @@
+---
+/**
+ * Контейнер изображения с object-cover и позицией — логика секции «Изображение» New-Themes.
+ */
+interface Props {
+  src: string;
+  alt: string;
+  position?:
+    | "top-left"
+    | "top-center"
+    | "top-right"
+    | "center-left"
+    | "center"
+    | "center-right"
+    | "bottom-left"
+    | "bottom-center"
+    | "bottom-right";
+  class?: string;
+  loading?: "eager" | "lazy";
+}
+
+const { src, alt, position = "center", class: className = "", loading = "lazy" } = Astro.props;
+
+const positionToObject: Record<NonNullable<Props["position"]>, string> = {
+  "top-left": "object-top object-left",
+  "top-center": "object-top",
+  "top-right": "object-top object-right",
+  "center-left": "object-left",
+  center: "object-center",
+  "center-right": "object-right",
+  "bottom-left": "object-bottom object-left",
+  "bottom-center": "object-bottom",
+  "bottom-right": "object-bottom object-right",
+};
+
+const pos = positionToObject[position] ?? "object-center";
+---
+
+<div class:list={["relative overflow-hidden bg-[#F5F5F5]", className]} data-nt="image-frame">
+  <img
+    src={src}
+    alt={alt}
+    loading={loading}
+    decoding="async"
+    class:list={["h-full w-full object-cover", pos]}
+  />
+</div>

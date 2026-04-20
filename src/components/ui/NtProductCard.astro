@@ -1,0 +1,45 @@
+---
+interface Props {
+  name: string;
+  price: string;
+  oldPrice?: string;
+  image: string;
+  imageAlt?: string;
+}
+
+const { name, price, oldPrice, image, imageAlt } = Astro.props;
+const alt = imageAlt ?? name;
+---
+
+<article class="group flex cursor-pointer flex-col gap-6 lg:gap-[25px]" data-nt="product-card">
+  <div
+    class="relative aspect-[318/515] w-full overflow-hidden rounded-[10px] bg-[#F5F5F5]"
+  >
+    <img
+      src={image}
+      alt={alt}
+      width="318"
+      height="515"
+      loading="lazy"
+      decoding="async"
+      class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+    />
+  </div>
+  <div class="flex flex-col gap-2.5 md:gap-[10px] px-3 md:px-[15px]">
+    <h3 class="font-manrope text-lg md:text-[24px] font-normal leading-[1.366] text-[#000000]">
+      {name}
+    </h3>
+    <div class="flex flex-wrap items-center gap-3 md:gap-[15px]">
+      <span class="font-manrope text-xl md:text-[32px] font-normal leading-[1.366] text-[#000000]">
+        {price}
+      </span>
+      {
+        oldPrice && (
+          <span class="font-manrope text-base md:text-[20px] font-medium leading-[1.366] text-[#999999] line-through">
+            {oldPrice}
+          </span>
+        )
+      }
+    </div>
+  </div>
+</article>

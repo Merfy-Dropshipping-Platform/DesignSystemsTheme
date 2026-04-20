@@ -1,0 +1,89 @@
+---
+/**
+ * Текстовые кнопки варианта (без образца) — Figma 494:10735 «Кнопка -- Нет».
+ * Состояния: выбран (заливка чёрная), обычный (outline), недоступен (#999 + лёгкий фон).
+ */
+export interface NtVariantTextItem {
+  id: string;
+  label: string;
+  /** Нет в наличии — серый стиль как в макете */
+  unavailable?: boolean;
+}
+
+interface Props {
+  items: NtVariantTextItem[];
+  selectedId?: string;
+  /** Подпись для radiogroup */
+  groupLabel?: string;
+  groupName?: string;
+  class?: string;
+}
+
+const {
+  items,
+  selectedId,
+  groupLabel = "Вариант",
+  groupName = "nt-variant-text",
+  class: className = "",
+} = Astro.props;
+---
+
+<div
+  class:list={["flex w-full max-w-[265px] flex-col font-manrope", className]}
+  data-nt="variant-text-row"
+>
+  <div class="flex flex-wrap gap-2" role="radiogroup" aria-label={groupLabel} data-nt-group={groupName}>
+    {
+      items.map((item) => {
+        const isSel = selectedId === item.id && !item.unavailable;
+        const base =
+          "inline-flex h-10 shrink-0 items-center justify-center rounded-[4px] px-3 py-2.5 text-[14px] font-normal leading-normal outline-none transition-opacity focus-visible:ring-2 focus-visible:ring-[#000000] focus-visible:ring-offset-2";
+        if (item.unavailable) {
+          return (
+            <button
+              type="button"
+              disabled
+              class:list={[
+                base,
+                "cursor-not-allowed border border-solid border-[#999999] bg-[rgba(153,153,153,0.1)] text-[#999999]",
+              ]}
+              role="radio"
+              aria-checked="false"
+              aria-disabled="true"
+              data-id={item.id}
+            >
+              {item.label}
+            </button>
+          );
+        }
+        if (isSel) {
+          return (
+            <button
+              type="button"
+              class:list={[base, "bg-[#000000] text-[#FFFFFF] hover:opacity-95"]}
+              role="radio"
+              aria-checked="true"
+              data-id={item.id}
+            >
+              {item.label}
+            </button>
+          );
+        }
+        return (
+          <button
+            type="button"
+            class:list={[
+              base,
+              "border border-solid border-[#000000] bg-transparent text-[#000000] hover:opacity-90",
+            ]}
+            role="radio"
+            aria-checked="false"
+            data-id={item.id}
+          >
+            {item.label}
+          </button>
+        );
+      })
+    }
+  </div>
+</div>

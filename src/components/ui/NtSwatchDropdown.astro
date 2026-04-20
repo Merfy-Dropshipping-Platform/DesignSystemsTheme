@@ -1,0 +1,105 @@
+---
+/**
+ * Выпадающий список вариантов цвета — Figma:
+ * 494:10669 «Список -- Круг», 494:10684 «Квадрат», 494:10699 «Нет».
+ */
+import NtIcon from "./NtIcon.astro";
+
+export interface NtSwatchOption {
+  id: string;
+  label: string;
+  /** Для preview circle/square — цвет образца из каталога */
+  swatchColor?: string;
+  disabled?: boolean;
+}
+
+interface Props {
+  selectedLabel: string;
+  /** Для режимов с превью — цвет выбранного свотча */
+  selectedSwatchColor?: string;
+  options: NtSwatchOption[];
+  iconBasePath?: string;
+  class?: string;
+  defaultOpen?: boolean;
+  preview?: "circle" | "square" | "none";
+}
+
+const {
+  selectedLabel,
+  selectedSwatchColor = "#000000",
+  options,
+  iconBasePath,
+  class: className = "",
+  defaultOpen = true,
+  preview = "circle",
+} = Astro.props;
+
+const swatchClass = (() => {
+  if (preview === "square") return "size-5 shrink-0 rounded-[2px]";
+  if (preview === "circle") return "size-5 shrink-0 rounded-full";
+  return "";
+})();
+---
+
+<details
+  class:list={["group w-[220px] cursor-pointer font-manrope", className]}
+  data-nt="swatch-dropdown"
+  data-nt-preview={preview}
+  open={defaultOpen}
+>
+  <summary
+    class="flex h-12 list-none items-center justify-between gap-2 rounded-[6px] border border-solid border-[#000000] bg-[#FFFFFF] px-3 py-2.5 group-open:rounded-b-none group-open:border-b-0 [&::-webkit-details-marker]:hidden"
+  >
+    <span class:list={["flex min-w-0 items-center gap-2", preview === "none" && "gap-0"]}>
+      {
+        preview !== "none" && swatchClass && (
+          <span
+            class:list={[swatchClass]}
+            style={{ backgroundColor: selectedSwatchColor }}
+            aria-hidden="true"
+          />
+        )
+      }
+      <span class="truncate text-[14px] font-normal leading-normal text-[#000000]">{selectedLabel}</span>
+    </span>
+    <NtIcon
+      name="dropdown-chevron"
+      iconBasePath={iconBasePath}
+      sizeClass="h-6 w-6"
+      class="pointer-events-none shrink-0 transition-transform group-open:rotate-180"
+    />
+  </summary>
+  <div
+    class="flex flex-col gap-2 rounded-b-[6px] border border-t-0 border-solid border-[#F5F5F5] bg-[#FFFFFF] px-3 py-2"
+  >
+    {
+      options.map((opt) => (
+        <div
+          class:list={[
+            "flex h-8 items-center gap-2",
+            preview === "none" ? "w-full" : "",
+            opt.disabled ? "opacity-70" : "",
+          ]}
+        >
+          {preview !== "none" && opt.swatchColor && (
+            <span
+              class:list={[swatchClass]}
+              style={{ backgroundColor: opt.swatchColor }}
+              aria-hidden="true"
+            />
+          )}
+          <span
+            class:list={[
+              "text-[14px] font-normal leading-normal",
+              opt.disabled
+                ? "text-[#999999] line-through decoration-solid [text-decoration-skip-ink:none]"
+                : "text-[#000000]",
+            ]}
+          >
+            {opt.label}
+          </span>
+        </div>
+      ))
+    }
+  </div>
+</details>

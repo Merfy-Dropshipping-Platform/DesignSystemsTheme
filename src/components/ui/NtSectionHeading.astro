@@ -1,0 +1,25 @@
+---
+interface Props {
+  title: string;
+  subtitle?: string;
+  titleId?: string;
+}
+
+const { title, subtitle, titleId } = Astro.props;
+---
+
+<div class="flex max-w-[90vw] flex-col items-center gap-[5px]" data-nt="section-heading">
+  <h2
+    id={titleId}
+    class="text-center font-comfortaa text-xl md:text-2xl lg:text-[32px] font-normal uppercase leading-[1.115] text-[#000000]"
+  >
+    {title}
+  </h2>
+  {
+    subtitle && (
+      <p class="text-center font-manrope text-sm md:text-lg xl:text-[24px] font-normal leading-[1.366] text-[#999999] px-2">
+        {subtitle}
+      </p>
+    )
+  }
+</div>

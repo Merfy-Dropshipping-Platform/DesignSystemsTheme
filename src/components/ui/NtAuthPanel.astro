@@ -1,0 +1,48 @@
+---
+/**
+ * Вход / регистрация / восстановление — Figma 494:10961 (ширина полей 430px, gap 80px между блоками).
+ */
+interface Props {
+  title: string;
+  subtitle?: string;
+  class?: string;
+}
+
+const { title, subtitle, class: className = "" } = Astro.props;
+---
+
+<div
+  class:list={[
+    "flex w-full max-w-[430px] flex-col items-center gap-[80px] bg-[#FFFFFF] font-manrope",
+    className,
+  ]}
+  data-nt="auth-panel"
+>
+  <div class="flex w-full flex-col items-center gap-2 text-center">
+    <h2
+      class="font-comfortaa text-[20px] font-normal uppercase leading-normal text-[#000000]"
+    >
+      {title}
+    </h2>
+    {
+      subtitle && (
+        <p class="max-w-full text-[16px] font-normal leading-normal text-[#999999]">
+          {subtitle}
+        </p>
+      )
+    }
+  </div>
+
+  <div class="flex w-full flex-col gap-6">
+    <slot name="fields" />
+  </div>
+
+  <div class="flex w-full flex-col items-center gap-10">
+    <div class="w-full">
+      <slot name="primary" />
+    </div>
+    <div class="flex w-full flex-col items-center gap-3 text-center text-[16px] font-normal leading-normal">
+      <slot name="links" />
+    </div>
+  </div>
+</div>

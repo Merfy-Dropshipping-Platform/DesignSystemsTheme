@@ -1,0 +1,43 @@
+---
+/**
+ * Поиск 1920 — Figma node 493:5453.
+ */
+interface Props {
+  placeholder?: string;
+  submitLabel?: string;
+  name?: string;
+  action?: string;
+  method?: "get" | "post";
+}
+
+const {
+  placeholder = "Поиск...",
+  submitLabel = "Найти",
+  name = "q",
+  action = "#",
+  method = "get",
+} = Astro.props;
+---
+
+<form
+  class="bg-[#FFFFFF] flex h-12 w-full max-w-[1320px] items-center justify-between overflow-hidden rounded-[4px] pl-3 pr-1 py-3 border border-[#000000]"
+  action={action}
+  method={method}
+  role="search"
+  data-nt="search-bar"
+>
+  <label class="sr-only" for="nt-search-input">{placeholder}</label>
+  <input
+    id="nt-search-input"
+    type="search"
+    name={name}
+    placeholder={placeholder}
+    class="min-w-0 flex-1 bg-transparent font-manrope text-[16px] font-light leading-normal text-[#000000] placeholder:text-[#999999] outline-none border-none"
+  />
+  <button
+    type="submit"
+    class="bg-[#000000] text-[#FFFFFF] flex h-10 shrink-0 items-center justify-center rounded-[4px] px-3 py-2.5 font-manrope text-[14px] font-normal leading-normal hover:opacity-95"
+  >
+    {submitLabel}
+  </button>
+</form>

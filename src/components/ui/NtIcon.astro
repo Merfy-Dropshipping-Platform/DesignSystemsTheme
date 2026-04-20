@@ -1,0 +1,16 @@
+---
+import type { NtIconName } from "../../lib/icon-paths";
+import { getNtIconUrl } from "../../lib/icon-paths";
+
+interface Props {
+  name: NtIconName;
+  class?: string;
+  iconBasePath?: string;
+  sizeClass?: string;
+}
+
+const { name, class: className = "", iconBasePath, sizeClass = "size-[24px]" } = Astro.props;
+const src = getNtIconUrl(name, iconBasePath);
+---
+
+<img src={src} alt="" class={`shrink-0 object-contain pointer-events-none ${sizeClass} ${className}`} width="24" height="24" aria-hidden="true" />

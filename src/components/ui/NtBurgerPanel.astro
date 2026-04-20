@@ -1,0 +1,91 @@
+---
+/**
+ * Мобильное меню (бургер) — Figma 495:11038, ширина 375.
+ */
+import NtIcon from "./NtIcon.astro";
+
+export interface NtBurgerNavItem {
+  label: string;
+  href: string;
+  active?: boolean;
+}
+
+interface Props {
+  searchPlaceholder?: string;
+  searchName?: string;
+  profileHref?: string;
+  profileLabel?: string;
+  nav: NtBurgerNavItem[];
+  iconBasePath?: string;
+  class?: string;
+}
+
+const {
+  searchPlaceholder = "Поиск",
+  searchName = "q",
+  profileHref = "#",
+  profileLabel = "Профиль",
+  nav,
+  iconBasePath,
+  class: className = "",
+} = Astro.props;
+---
+
+<div
+  class:list={["w-full max-w-[375px] bg-[#FFFFFF] px-4 pb-8 pt-4 font-manrope", className]}
+  data-nt="burger-panel"
+>
+  <div class="flex items-center gap-2">
+    <form
+      class="border-[#999999] bg-[#FFFFFF] flex h-10 min-h-10 flex-1 items-center justify-between rounded-[4px] border border-solid pl-3 pr-2"
+      role="search"
+      action="#"
+      method="get"
+    >
+      <label class="sr-only" for="nt-burger-search">{searchPlaceholder}</label>
+      <input
+        id="nt-burger-search"
+        type="search"
+        name={searchName}
+        placeholder={searchPlaceholder}
+        class="min-w-0 flex-1 bg-transparent font-manrope text-[12px] font-normal leading-normal text-[#000000] placeholder:text-[#999999] outline-none"
+      />
+      <button type="submit" class="flex h-6 w-6 shrink-0 items-center justify-center" aria-label="Найти">
+        <NtIcon name="search-sm" iconBasePath={iconBasePath} sizeClass="h-6 w-6" class="pointer-events-none" />
+      </button>
+    </form>
+    <a
+      href={profileHref}
+      class="bg-[#000000] flex size-10 shrink-0 items-center justify-center rounded-[4px]"
+      aria-label={profileLabel}
+    >
+      <NtIcon
+        name="user"
+        iconBasePath={iconBasePath}
+        sizeClass="h-6 w-6"
+        class="pointer-events-none brightness-0 invert"
+      />
+    </a>
+  </div>
+
+  <nav class="mt-10 flex flex-col gap-5" aria-label="Основное меню">
+    {
+      nav.map((item) => (
+        <div class="flex flex-col gap-1">
+          <a
+            href={item.href}
+            class:list={[
+              "text-[14px] font-normal leading-normal",
+              item.active ? "text-[#000000]" : "text-[#999999]",
+            ]}
+          >
+            {item.label}
+          </a>
+          {item.active && (
+            <div class="h-px w-[54px] bg-[#000000]" aria-hidden="true" data-nt="burger-active-line" />
+          )}
+        </div>
+      ))
+    }
+  </nav>
+</div>

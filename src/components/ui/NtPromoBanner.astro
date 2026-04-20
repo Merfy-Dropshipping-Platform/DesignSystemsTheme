@@ -1,0 +1,48 @@
+---
+/**
+ * Панель объявлений — сетка размеров текста (1920): малый 189:7482 h32, средний 189:7467 h40, большой 189:7452 h48.
+ */
+interface Props {
+  text: string;
+  link: string;
+  linkText?: string;
+  /** Размер текста по макету «Панель объявлений» */
+  textSize?: "sm" | "md" | "lg";
+}
+
+const { text, link, linkText = "Перейти", textSize = "lg" } = Astro.props;
+
+const heightCls =
+  textSize === "sm"
+    ? "min-h-8"
+    : textSize === "md"
+      ? "min-h-10"
+      : "min-h-12";
+
+const textCls =
+  textSize === "sm"
+    ? "text-[12px]"
+    : textSize === "md"
+      ? "text-[14px]"
+      : "text-[16px]";
+---
+
+<div
+  class:list={[
+    "bg-[#000000] text-[#FFFFFF] flex items-center justify-center overflow-hidden px-4 md:px-20 xl:px-[300px] 2xl:px-[680px]",
+    heightCls,
+  ]}
+  data-nt="promo-banner"
+  data-nt-text-size={textSize}
+>
+  <p class:list={["text-center font-roboto font-light leading-normal max-w-full", textCls]}>
+    <span class="whitespace-pre-wrap">{text}</span>
+    {" "}
+    <a
+      href={link}
+      class="underline underline-offset-2 [text-decoration-skip-ink:none] decoration-solid hover:opacity-90"
+    >
+      {linkText}
+    </a>
+  </p>
+</div>
