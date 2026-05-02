@@ -3,21 +3,45 @@ interface Props {
   title: string;
   subtitle?: string;
   titleId?: string;
+  /**
+   * Rose / Figma: заголовок Comfortaa 20px Regular, подзаголовок Manrope 16px #999, gap 8px.
+   */
+  variant?: "default" | "rose";
 }
 
-const { title, subtitle, titleId } = Astro.props;
+const { title, subtitle, titleId, variant = "default" } = Astro.props;
+const isRose = variant === "rose";
 ---
 
-<div class="flex max-w-[90vw] flex-col items-center gap-[5px]" data-nt="section-heading">
+<div
+  class:list={[
+    "flex max-w-[90vw] flex-col items-center",
+    isRose ? "gap-2" : "gap-[5px]",
+  ]}
+  data-nt="section-heading"
+  data-nt-variant={variant}
+>
   <h2
     id={titleId}
-    class="text-center font-comfortaa text-xl md:text-2xl lg:text-[32px] font-normal uppercase leading-[1.115] text-[#000000]"
+    class:list={[
+      "text-center font-comfortaa font-normal uppercase text-[#000000]",
+      isRose
+        ? "text-[20px] leading-none tracking-normal"
+        : "text-xl md:text-2xl lg:text-[32px] leading-[1.115]",
+    ]}
   >
     {title}
   </h2>
   {
     subtitle && (
-      <p class="text-center font-manrope text-sm md:text-lg xl:text-[24px] font-normal leading-[1.366] text-[#999999] px-2">
+      <p
+        class:list={[
+          "text-center font-manrope font-normal text-[#999999]",
+          isRose
+            ? "max-w-[780px] px-2 text-[16px] leading-none tracking-normal"
+            : "px-2 text-sm md:text-lg xl:text-[24px] leading-[1.366]",
+        ]}
+      >
         {subtitle}
       </p>
     )
