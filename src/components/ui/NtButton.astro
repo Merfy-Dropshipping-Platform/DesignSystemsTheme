@@ -19,6 +19,7 @@ const {
   size = "lg",
   disabled = false,
   class: className = "",
+  ...rest
 } = Astro.props;
 
 const base =
@@ -42,11 +43,11 @@ const cls = `${base} ${sizes[size]} ${variants[variant]} ${className}`;
 
 {
   href && !disabled ? (
-    <a href={href} class={cls} data-nt="button" data-nt-size={size} data-nt-variant={variant}>
+    <a href={href} class={cls} data-nt="button" data-nt-size={size} data-nt-variant={variant} {...rest}>
       <slot />
     </a>
   ) : (
-    <button type={type} class={cls} disabled={disabled} data-nt="button" data-nt-size={size} data-nt-variant={variant}>
+    <button type={type} class={cls} disabled={disabled} data-nt="button" data-nt-size={size} data-nt-variant={variant} {...rest}>
       <slot />
     </button>
   )
