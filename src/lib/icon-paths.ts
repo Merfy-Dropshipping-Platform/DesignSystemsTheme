@@ -1,5 +1,5 @@
-/** Базовый URL для SVG из public consuming-приложения (rose-theme: /new-themes/icons/). */
-export const getNtIconUrl = (name: NtIconName, basePath = "/new-themes/icons") =>
+/** Базовый URL для SVG из public consuming-приложения (rose-theme: /icons/). */
+export const getNtIconUrl = (name: NtIconName, basePath = "/icons") =>
   `${basePath.replace(/\/$/, "")}/${NT_ICON_FILES[name]}`;
 
 export type NtIconName =
