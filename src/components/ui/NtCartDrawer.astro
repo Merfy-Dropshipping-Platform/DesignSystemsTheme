@@ -121,7 +121,11 @@ const evToggle = `${eventPrefix}:toggle`;
 
 	document.addEventListener("click", (event) => {
 		const target = event.target;
-		if (!(target instanceof HTMLElement)) return;
+		// Element (не HTMLElement): иконка корзины/закрытия — это <svg>, а
+		// SVGElement НЕ instanceof HTMLElement → клик прямо по иконке отбрасывался
+		// и дровер не открывался/закрывался по прямому клику. closest() определён
+		// на Element, поэтому корректно работает и для <svg>/<path>.
+		if (!(target instanceof Element)) return;
 		if (target.closest("[data-cart-close]")) {
 			event.preventDefault();
 			close();
