@@ -2,7 +2,20 @@
  * React-обёртки для редактора Puck (визуал совпадает с компонентами New-Themes).
  */
 import { useState } from "react";
+import { getNtIconUrl } from "../lib/icon-paths";
 
+/**
+ * Заглушка для демо-блоков: сплошная плитка в data:URI.
+ *
+ * Раньше здесь были прямые пути к картинкам старого проекта — в теме-
+ * потребителе их нет, и превью редактора било в 404. Тема передаёт свои
+ * изображения пропсами; без них блок показывает заглушку, а не битую ссылку.
+ */
+const PLACEHOLDER_IMAGE =
+	"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16'><rect width='16' height='16' fill='%23F5F5F5'/></svg>";
+
+const fill = (images: readonly string[] | undefined, count: number): string[] =>
+	Array.from({ length: count }, (_, i) => images?.[i] ?? PLACEHOLDER_IMAGE);
 const promoHeight: Record<"sm" | "md" | "lg", string> = {
 	sm: "min-h-8",
 	md: "min-h-10",
@@ -166,18 +179,14 @@ export const PuckProductCard = ({
 	</article>
 );
 
-const PRODUCT_CAROUSEL_DEMO_IMAGES = [
-	"/images/4x/Товар_1.png",
-	"/images/4x/Товар_2.png",
-	"/images/4x/Товар_3.png",
-	"/images/4x/Товар_4.png",
-] as const;
+
 
 /** Главное фото + ряд миниатюр (как на PDP), демо для Puck */
-export const PuckProductMediaCarousel = () => {
+export const PuckProductMediaCarousel = ({ images }: { images?: readonly string[] }) => {
+	const photos = fill(images, 4);
 	const [active, setActive] = useState(0);
-	const n = PRODUCT_CAROUSEL_DEMO_IMAGES.length;
-	const src = PRODUCT_CAROUSEL_DEMO_IMAGES[active] ?? PRODUCT_CAROUSEL_DEMO_IMAGES[0]!;
+	const n = photos.length;
+	const src = photos[active] ?? photos[0]!;
 	const goPrev = () => setActive((i) => (i - 1 + n) % n);
 	const goNext = () => setActive((i) => (i + 1) % n);
 
@@ -191,7 +200,7 @@ export const PuckProductMediaCarousel = () => {
 					className="absolute left-2 top-1/2 z-10 flex size-10 -translate-y-1/2 items-center justify-center rounded-full border border-solid border-[#F5F5F5] bg-[#FFFFFF]/95 shadow-sm outline-none transition-opacity hover:opacity-95 focus-visible:ring-2 focus-visible:ring-[#000000] focus-visible:ring-offset-2"
 					aria-label="Предыдущее фото"
 				>
-					<img src="/new-themes/icons/arrow-slide-left.svg" alt="" className="size-6" />
+					<img src={getNtIconUrl("arrow-slide-left")} alt="" className="size-6" />
 				</button>
 				<button
 					type="button"
@@ -199,11 +208,11 @@ export const PuckProductMediaCarousel = () => {
 					className="absolute right-2 top-1/2 z-10 flex size-10 -translate-y-1/2 items-center justify-center rounded-full border border-solid border-[#F5F5F5] bg-[#FFFFFF]/95 shadow-sm outline-none transition-opacity hover:opacity-95 focus-visible:ring-2 focus-visible:ring-[#000000] focus-visible:ring-offset-2"
 					aria-label="Следующее фото"
 				>
-					<img src="/new-themes/icons/arrow-slide-right.svg" alt="" className="size-6" />
+					<img src={getNtIconUrl("arrow-slide-right")} alt="" className="size-6" />
 				</button>
 			</div>
 			<div className="mt-3 flex flex-wrap gap-2" role="tablist" aria-label="Галерея фото товара">
-				{PRODUCT_CAROUSEL_DEMO_IMAGES.map((url, i) => {
+				{photos.map((url, i) => {
 					const isOn = active === i;
 					return (
 						<button
@@ -467,14 +476,14 @@ export const PuckBurgerPanel = () => (
 		<div className="flex items-center gap-2">
 			<div className="flex h-10 min-h-10 flex-1 items-center justify-between rounded-[4px] border border-solid border-[#999999] bg-white pl-3 pr-2">
 				<span className="text-[12px] text-[#999999]">Поиск</span>
-				<img src="/new-themes/icons/search-sm.svg" alt="" className="h-6 w-6 opacity-80" />
+				<img src={getNtIconUrl("search-sm")} alt="" className="h-6 w-6 opacity-80" />
 			</div>
 			<a
 				className="flex size-10 shrink-0 items-center justify-center rounded-[4px] bg-[#000000]"
 				href="#"
 				aria-label="Профиль"
 			>
-				<img src="/new-themes/icons/user.svg" alt="" className="h-6 w-6 brightness-0 invert" />
+				<img src={getNtIconUrl("user")} alt="" className="h-6 w-6 brightness-0 invert" />
 			</a>
 		</div>
 		<nav className="mt-10 flex flex-col gap-5" aria-label="Меню">
@@ -515,7 +524,7 @@ export const PuckSwatchDropdown = ({
 					<span className="truncate text-[14px] text-[#000000]">Коричневый</span>
 				</span>
 				<img
-					src="/new-themes/icons/dropdown-chevron.svg"
+					src={getNtIconUrl("dropdown-chevron")}
 					alt=""
 					className="h-6 w-6 shrink-0 transition-transform group-open:rotate-180"
 				/>
@@ -683,20 +692,24 @@ export const PuckCollectionCard = ({ name, image }: { name: string; image: strin
 );
 
 /** Демо-данные и сетки как в rose-theme (Collections / Popular / Gallery). */
-const PUCK_DEMO_COLLECTIONS = [
-	{ name: "Коллекция RIVIERA", image: "/images/4x/Коллекция_1.png" },
-	{ name: "Коллекция URBAN", image: "/images/4x/Коллекция_2.png" },
-	{ name: "Коллекция FUTURISM", image: "/images/4x/Коллекция_3.png" },
+const PUCK_DEMO_COLLECTION_NAMES = [
+	"Коллекция RIVIERA",
+	"Коллекция URBAN",
+	"Коллекция FUTURISM",
 ] as const;
 
-const PUCK_DEMO_PRODUCTS = [
-	{ name: "Сумка", price: "5 990₽", oldPrice: "7 990₽", image: "/images/4x/Товар_1.png" },
-	{ name: "Сумка", price: "5 990₽", oldPrice: "7 990₽", image: "/images/4x/Товар_2.png" },
-	{ name: "Сумка", price: "5 990₽", oldPrice: "7 990₽", image: "/images/4x/Товар_3.png" },
-	{ name: "Сумка", price: "5 990₽", oldPrice: "7 990₽", image: "/images/4x/Товар_4.png" },
-] as const;
+const PUCK_DEMO_PRODUCT = { name: "Товар", price: "5 990₽", oldPrice: "7 990₽" } as const;
 
-export const PuckCollectionsSection = ({ title, subtitle }: { title: string; subtitle: string }) => (
+export const PuckCollectionsSection = ({
+	title,
+	subtitle,
+	images,
+}: {
+	title: string;
+	subtitle: string;
+	/** Картинки темы для демо-карточек; без них — заглушка. */
+	images?: readonly string[];
+}) => (
 	<section className="w-full bg-white px-4 pb-[120px] pt-[120px] md:px-20 2xl:px-[300px]">
 		<div className="mx-auto flex w-full max-w-[1320px] flex-col gap-10">
 			<PuckSectionHeading title={title} subtitle={subtitle} />
@@ -704,15 +717,24 @@ export const PuckCollectionsSection = ({ title, subtitle }: { title: string; sub
 				className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3"
 				role="list"
 			>
-				{PUCK_DEMO_COLLECTIONS.map((c) => (
-					<PuckCollectionCard key={c.name} name={c.name} image={c.image} />
+				{PUCK_DEMO_COLLECTION_NAMES.map((name, i) => (
+					<PuckCollectionCard key={name} name={name} image={fill(images, 3)[i]!} />
 				))}
 			</div>
 		</div>
 	</section>
 );
 
-export const PuckPopularSection = ({ title, subtitle }: { title: string; subtitle: string }) => (
+export const PuckPopularSection = ({
+	title,
+	subtitle,
+	images,
+}: {
+	title: string;
+	subtitle: string;
+	/** Картинки темы для демо-карточек; без них — заглушка. */
+	images?: readonly string[];
+}) => (
 	<section className="w-full bg-white px-4 pb-[120px] pt-[120px] md:px-20 2xl:px-[300px]">
 		<div className="mx-auto flex w-full max-w-[1320px] flex-col gap-10">
 			<PuckSectionHeading title={title} subtitle={subtitle} />
@@ -720,22 +742,37 @@ export const PuckPopularSection = ({ title, subtitle }: { title: string; subtitl
 				className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-4 lg:grid-cols-4"
 				role="list"
 			>
-				{PUCK_DEMO_PRODUCTS.map((p) => (
-					<PuckProductCard key={p.image} name={p.name} price={p.price} oldPrice={p.oldPrice} image={p.image} />
+				{fill(images, 4).map((image, i) => (
+					<PuckProductCard
+						key={i}
+						name={PUCK_DEMO_PRODUCT.name}
+						price={PUCK_DEMO_PRODUCT.price}
+						oldPrice={PUCK_DEMO_PRODUCT.oldPrice}
+						image={image}
+					/>
 				))}
 			</div>
 		</div>
 	</section>
 );
 
-export const PuckGallerySection = ({ title, subtitle }: { title: string; subtitle: string }) => (
+export const PuckGallerySection = ({
+	title,
+	subtitle,
+	images,
+}: {
+	title: string;
+	subtitle: string;
+	/** Три картинки темы: крупная, карточка товара, карточка коллекции. */
+	images?: readonly string[];
+}) => (
 	<section className="w-full bg-white px-4 pb-[120px] pt-[120px] md:px-20 2xl:px-[300px]">
 		<div className="mx-auto flex w-full max-w-[1320px] flex-col gap-10">
 			<PuckSectionHeading title={title} subtitle={subtitle} />
 			<div className="grid grid-cols-1 gap-4 lg:grid-cols-[1fr_430px] lg:gap-4">
 				<div className="aspect-[874/875] w-full overflow-hidden rounded-[8px] bg-[#F5F5F5]">
 					<img
-						src="/images/4x/Изображение_Галерея.png"
+						src={fill(images, 3)[0]!}
 						alt="Галерея"
 						loading="lazy"
 						className="h-full w-full object-cover"
@@ -745,12 +782,12 @@ export const PuckGallerySection = ({ title, subtitle }: { title: string; subtitl
 				</div>
 				<div className="flex flex-col gap-4">
 					<PuckProductCard
-						name="Сумка"
-						price="5 990₽"
-						oldPrice="7 990₽"
-						image="/images/4x/Товар_5__2_.png"
+						name={PUCK_DEMO_PRODUCT.name}
+						price={PUCK_DEMO_PRODUCT.price}
+						oldPrice={PUCK_DEMO_PRODUCT.oldPrice}
+						image={fill(images, 3)[1]!}
 					/>
-					<PuckCollectionCard name="Коллекция URBAN" image="/images/4x/Товар_5__3_.png" />
+					<PuckCollectionCard name="Коллекция URBAN" image={fill(images, 3)[2]!} />
 				</div>
 			</div>
 		</div>
