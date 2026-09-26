@@ -108,12 +108,17 @@ const evToggle = `${eventPrefix}:toggle`;
 	const setState = (state) => {
 		const root = document.getElementById(rootId);
 		if (!root) return;
+		const wasOpen = root.dataset.state === "open";
 		root.dataset.state = state;
 		root.setAttribute("aria-hidden", state === "open" ? "false" : "true");
 		root.querySelectorAll("[data-state]").forEach((el) => {
 			el.dataset.state = state;
 		});
-		document.body.style.overflow = state === "open" ? "hidden" : "";
+		// Прокрутку трогаем только при настоящей смене состояния: Escape приходит
+		// и при закрытой шторке, и безусловный сброс снимал блокировку, которую
+		// в это время держит другое окно (бургер, шторка фильтров).
+		if (state === "open") document.body.style.overflow = "hidden";
+		else if (wasOpen) document.body.style.overflow = "";
 	};
 
 	const open = () => setState("open");
