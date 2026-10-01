@@ -105,6 +105,12 @@ const evToggle = `${eventPrefix}:toggle`;
 </div>
 
 <script is:inline define:vars={{ rootId, evOpen, evClose, evToggle }}>
+	// Прокрутку блокируем на <html>, а не на body. Если у <html> свой overflow
+	// (Bloom и Vanilla держат overflow-x: clip против горизонтальной прокрутки),
+	// overflow с body не переходит на окно: страница за шторкой продолжала
+	// прокручиваться, а body становился контейнером прокрутки для липкой шапки.
+	let overflowBeforeOpen = "";
+
 	const setState = (state) => {
 		const root = document.getElementById(rootId);
 		if (!root) return;
@@ -116,9 +122,18 @@ const evToggle = `${eventPrefix}:toggle`;
 		});
 		// Прокрутку трогаем только при настоящей смене состояния: Escape приходит
 		// и при закрытой шторке, и безусловный сброс снимал блокировку, которую
-		// в это время держит другое окно (бургер, шторка фильтров).
-		if (state === "open") document.body.style.overflow = "hidden";
-		else if (wasOpen) document.body.style.overflow = "";
+		// в это время держит другое окно (бургер, шторка фильтров). Закрываясь,
+		// возвращаем значение до открытия: корзину открывают и поверх меню
+		// шапки, и его блокировка должна пережить шторку.
+		const html = document.documentElement;
+		if (state === "open") {
+			if (!wasOpen) {
+				overflowBeforeOpen = html.style.overflow;
+				html.style.overflow = "hidden";
+			}
+		} else if (wasOpen) {
+			html.style.overflow = overflowBeforeOpen;
+		}
 	};
 
 	const open = () => setState("open");
