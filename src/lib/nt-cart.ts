@@ -171,6 +171,8 @@ export const createNtCart = (opts: NtCartCreateOptions) => {
 				.map((line) => {
 					const variant = [line.variant?.color, line.variant?.size].filter(Boolean).join(", ");
 					const pHref = `${productPathPrefix}/${line.productId}`;
+					// Цены — за всю строку, как и итог; старая зачёркнута рядом с текущей.
+					const oldTotal = line.oldPrice && line.oldPrice > line.price ? formatPrice(line.oldPrice * line.quantity) : "";
 					return `
 					<li class="flex items-start gap-4" data-line-id="${line.id}">
 						<a href="${pHref}" class="block size-20 shrink-0 overflow-hidden bg-[#F5F5F5]">
@@ -184,13 +186,16 @@ export const createNtCart = (opts: NtCartCreateOptions) => {
 								</div>
 								<button type="button" data-cart-remove data-id="${line.id}" class="font-manrope text-[14px] font-normal leading-normal text-[#999999] transition-opacity hover:text-[#000000]" aria-label="Удалить">Удалить</button>
 							</div>
-							<div class="flex items-center justify-between">
-								<div class="inline-flex h-9 items-center rounded-[4px] border border-[#F5F5F5]">
+							<div class="flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
+								<div class="inline-flex h-9 shrink-0 items-center rounded-[4px] border border-[#F5F5F5]">
 									<button type="button" data-cart-dec data-id="${line.id}" class="flex h-9 w-9 items-center justify-center" aria-label="Уменьшить">−</button>
 									<span class="min-w-[28px] text-center font-manrope text-[14px]">${line.quantity}</span>
 									<button type="button" data-cart-inc data-id="${line.id}" class="flex h-9 w-9 items-center justify-center" aria-label="Увеличить">+</button>
 								</div>
-								<span class="font-manrope text-[16px] font-normal leading-normal text-[#000000]">${formatPrice(line.price * line.quantity)}</span>
+								<div class="flex grow basis-0 flex-wrap items-baseline justify-end gap-x-2">
+									<span class="whitespace-nowrap font-manrope text-[16px] font-normal leading-normal text-[#000000]">${formatPrice(line.price * line.quantity)}</span>
+									${oldTotal ? `<span class="whitespace-nowrap font-manrope text-[14px] font-light leading-normal text-[#999999] line-through">${oldTotal}</span>` : ""}
+								</div>
 							</div>
 						</div>
 					</li>
